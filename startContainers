@@ -71,7 +71,7 @@ function restartZookeeper {
 	done
 }
 
-function configureQuorumForMesos {
+function configureMesos {
 	echo "Configuring zookeeper quorum in mesos"
 	zk='zk://'
 	for masterId in "$@"
@@ -85,7 +85,9 @@ function configureQuorumForMesos {
 	for masterId in "$@"
         do
                 hostname="master"${masterId}
+		hostIp=$(getContainerIp ${hostname})
 		sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "echo $zk > /etc/mesos/zk; echo 2 > /etc/mesos-master/quorum"
+		sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "nohup mesos-master --hostname=$hostname --ip=$hostIp --zk=$zk --port=5050 --log_dir=/var/log/mesos --registry=in_memory --work_dir=/var/lib/mesos > foo.out 2> foo.err < /dev/null &"
         done
 }
 
@@ -104,8 +106,8 @@ startMaster 2
 startMaster 3
 configureClusterZookeeper
 restartZookeeper 1 2 3
-configureQuorumForMesos 1 2 3
-disableMesosSlave 1 2 3 
+configureMesos 1 2 3
+#disableMesosSlave 1 2 3 
 #startContainer node1
 #startContainer node2
 #startContainer node3
