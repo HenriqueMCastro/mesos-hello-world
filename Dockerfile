@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM ubuntu-upstart:14.04
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
@@ -29,19 +29,11 @@ RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true 
 RUN apt-get -y install oracle-java8-installer
 RUN apt-get -y install oracle-java8-set-default
 
-# install some extras
-RUN dpkg-reconfigure locales && \
-    locale-gen en_GB.UTF-8 && \
-    /usr/sbin/update-locale LANG=en_GB.UTF-8
-ENV LC_ALL en_GB.UTF-8
-RUN apt-get -y install lsof
-RUN apt-get -y install telnet
-
 # install mesos
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF 
 RUN echo deb http://repos.mesosphere.io/ubuntu trusty main > /etc/apt/sources.list.d/mesosphere.list 
 RUN apt-get update 
-RUN apt-get -y install mesos=0.24.1-0.2.35.ubuntu1404
+RUN apt-get -y install mesosphere
 
 EXPOSE 2181
 EXPOSE 2888
