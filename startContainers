@@ -1,0 +1,112 @@
+#!/bin/bash
+
+function timestamp {
+	date +%s 
+}
+
+function backupHostsFile {
+	filename="hosts"$(timestamp)".bak"
+	cp /etc/hosts ${filename}
+}
+
+function removeContainerIfRunning {
+	echo "Checking if container ${1} is running"
+      	running=`docker ps -a | grep ${1}`
+	if [[ "${running}" != "" ]];
+	then
+		docker rm -f ${1}
+		echo "Stopped docker container with name ${1}"
+	fi
+}
+
+function removeHost {
+	exists=`cat /etc/hosts | grep ${1}`
+	if [[ "${exists}" != "" ]];
+	then
+		sudo sed -i "/${1}/d" /etc/hosts
+	fi 
+}
+
+function getContainerIp {
+	hostname=${1}
+	docker inspect ${hostname} | grep IPAddress | cut -d '"' -f 4 | sed '/^$/d' | sed '$!N; /^\(.*\)\n\1$/!P; D'
+}
+
+function startMaster {
+	masterId=${1}
+	hostname=master${masterId}
+	removeContainerIfRunning ${hostname}
+        docker run -d  --name=${hostname} mesos_master
+	removeHost ${hostname}
+	containerIp=$(getContainerIp ${hostname})
+        echo "${containerIp} ${hostname}" | sudo tee -a /etc/hosts
+	sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "echo $masterId > /etc/zookeeper/conf/myid"
+}
+
+function configureClusterZookeeper {
+	echo "Configuring zoo.cfg"
+	file="/etc/zookeeper/conf/zoo.cfg"
+	hostname1="master1"
+	hostname2="master2"
+	hostname3="master3"
+	ip1=$(getContainerIp ${hostname1})
+	ip2=$(getContainerIp ${hostname2})
+	ip3=$(getContainerIp ${hostname3})
+	server1="server.1="${ip1}":2888:3888"
+	server2="server.2="${ip2}":2888:3888"
+	server3="server.3="${ip3}":2888:3888"
+	sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname1}" "echo $server1 >> $file; echo $server2 >> $file; echo $server3 >> $file"
+	sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname2}" "echo $server1 >> $file; echo $server2 >> $file; echo $server3 >> $file"
+	sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname3}" "echo $server1 >> $file; echo $server2 >> $file; echo $server3 >> $file"
+}
+
+function restartZookeeper {
+	echo "Restarting zookeepers"
+	for masterId in "$@"
+	do
+		hostname="master"${masterId}
+		# zookeeper seems to keep the sockets open even after stopping it so we will have to kill it
+		sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "ps axf | grep zookeeper | grep -v grep | awk '{print "kill -9 " $1}' | sh"
+		sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "service zookeeper start"
+	done
+}
+
+function configureQuorumForMesos {
+	echo "Configuring zookeeper quorum in mesos"
+	zk='zk://'
+	for masterId in "$@"
+        do
+                hostname="master"${masterId}
+		hostIp=$(getContainerIp ${hostname})
+		zk=${zk}${hostIp}":2181,"
+        done
+	zk=${zk::-1}"/mesos"
+	echo $zk
+	for masterId in "$@"
+        do
+                hostname="master"${masterId}
+		sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "echo $zk > /etc/mesos/zk; echo 2 > /etc/mesos-master/quorum"
+        done
+}
+
+function disableMesosSlave {
+	echo "Disabling mesos slave"
+	for masterId in "$@"
+        do
+                hostname="master"${masterId}
+ 		sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "service mesos-slave stop; echo manual > /etc/init/mesos-slave.override"
+        done
+}
+
+backupHostsFile
+startMaster 1
+startMaster 2
+startMaster 3
+configureClusterZookeeper
+restartZookeeper 1 2 3
+configureQuorumForMesos 1 2 3
+disableMesosSlave 1 2 3 
+#startContainer node1
+#startContainer node2
+#startContainer node3
+

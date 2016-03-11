@@ -1,0 +1,18 @@
+# Create docker build file for ubuntu with sshd
+docker build -t ubuntu_sshd .
+
+docker network create --subnet=172.18.0.0/16 mynetwork
+
+
+docker run -d  --name=master1 ubuntu_sshd
+docker inspect master1 | grep IPAddress | cut -d '"' -f 4 | sed '/^$/d' | xargs -i echo {} master1 | sed '$!N; /^\(.*\)\n\1$/!P; D' | sudo tee -a /etc/hosts
+docker run -d  --name=master2 ubuntu_sshd
+docker inspect master2 | grep IPAddress | cut -d '"' -f 4 | sed '/^$/d' | xargs -i echo {} master2 | sed '$!N; /^\(.*\)\n\1$/!P; D' | sudo tee -a /etc/hosts
+docker run -d  --name=master3 ubuntu_sshd
+docker inspect master3 | grep IPAddress | cut -d '"' -f 4 | sed '/^$/d' | xargs -i echo {} master3 | sed '$!N; /^\(.*\)\n\1$/!P; D' | sudo tee -a /etc/hosts
+docker run -d  --name=node1 ubuntu_sshd
+docker inspect node1 | grep IPAddress | cut -d '"' -f 4 | sed '/^$/d' | xargs -i echo {} node1 | sed '$!N; /^\(.*\)\n\1$/!P; D' | sudo tee -a /etc/hosts
+docker run -d  --name=node2 ubuntu_sshd
+docker inspect node2 | grep IPAddress | cut -d '"' -f 4 | sed '/^$/d' | xargs -i echo {} node2 | sed '$!N; /^\(.*\)\n\1$/!P; D' | sudo tee -a /etc/hosts
+docker run -d  --name=node3 ubuntu_sshd
+docker inspect node3 | grep IPAddress | cut -d '"' -f 4 | sed '/^$/d' | xargs -i echo {} node3 | sed '$!N; /^\(.*\)\n\1$/!P; D' | sudo tee -a /etc/hosts
