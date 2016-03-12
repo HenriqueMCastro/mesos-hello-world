@@ -54,7 +54,8 @@ function startSlaves {
             removeHost ${hostname}
             containerIp=$(getContainerIp ${hostname})
             echo "${containerIp} ${hostname}" | sudo tee -a /etc/hosts
-            sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "nohup mesos-slave --hostname=$hostname --ip=$containerIp --master=$zkMesos --log_dir=/var/log/mesos --logging_level=INFO > foo.out 2> foo.err < /dev/null &"
+            sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "nohup mesos-slave --hostname=$hostname --ip=$containerIp --master=$zkMesos --log_dir=/var/log/mesos --logging_level=INFO --containerizers=docker,mesos --executor_registration_timeout=5mins > foo.out 2> foo.err < /dev/null &"
+            sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "nohup service docker start > foo.out 2> foo.err < /dev/null &"
         done
 }
 
@@ -120,7 +121,7 @@ function configureMesosphere {
     zkMarathon=${zkMarathon::-1}"/marathon"
 	hostname="master1"
     sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "mkdir -p /etc/marathon/conf; touch /etc/marathon/conf/zk; echo $zkMarathon > /etc/marathon/conf/zk"
-    sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "nohup /usr/bin/marathon --hostname $hostname > foo.out 2> foo.err < /dev/null &"
+    sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "nohup /usr/bin/marathon --hostname $hostname --task_launch_timeout 300000 --logging_level info > foo.out 2> foo.err < /dev/null &"
 	sleep 2
 	echo "Starting chronos in master1, port 4400"
     sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "nohup /usr/bin/chronos --hostname $hostname > foo.out 2> foo.err < /dev/null &"
