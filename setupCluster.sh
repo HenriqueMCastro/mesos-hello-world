@@ -1,15 +1,29 @@
 #!/bin/bash
 
-function timestamp {
+network="172.18.0.0./16"
+
+buildImages() {
+    docker build -t mesos_master master
+    docker build -t mesos_slave slave
+}
+createDockerNetwork() {
+    networkExistsAlready=`docker network ls | grep mynetwork`
+    if [[ "${networkExistsAlready}" == "" ]];
+	then
+	    echo "Creating docker network ${network}"
+	    docker network create --subnet=${network} mynetwork
+	fi
+}
+timestamp() {
 	date +%s 
 }
 
-function backupHostsFile {
+backupHostsFile() {
 	filename="hosts"$(timestamp)".bak"
 	cp /etc/hosts ${filename}
 }
 
-function removeContainerIfRunning {
+removeContainerIfRunning() {
 	echo "Checking if container ${1} is running"
       	running=`docker ps -a | grep ${1}`
 	if [[ "${running}" != "" ]];
@@ -19,7 +33,7 @@ function removeContainerIfRunning {
 	fi
 }
 
-function removeHost {
+removeHost() {
 	exists=`cat /etc/hosts | grep ${1}`
 	if [[ "${exists}" != "" ]];
 	then
@@ -27,12 +41,12 @@ function removeHost {
 	fi 
 }
 
-function getContainerIp {
+getContainerIp() {
 	hostname=${1}
 	docker inspect ${hostname} | grep IPAddress | cut -d '"' -f 4 | sed '/^$/d' | sed '$!N; /^\(.*\)\n\1$/!P; D'
 }
 
-function startMasters {
+startMasters() {
     echo "Starting up masters docker containers"
     for masterId in `seq 1 ${numberOfMasters}`;
     do
@@ -45,7 +59,7 @@ function startMasters {
     done
 }
 
-function startSlaves {
+startSlaves() {
     echo "Starting up slaves docker containers"
     for slaveId in `seq 1 ${numberOfSlaves}`;
         do
@@ -60,7 +74,7 @@ function startSlaves {
 }
 
 
-function configureClusterZookeeper {
+configureClusterZookeeper() {
 	echo "Configuring zoo.cfg"
 	file="/etc/zookeeper/conf/zoo.cfg"
 	for masterId in `seq 1 ${numberOfMasters}`;
@@ -76,7 +90,7 @@ function configureClusterZookeeper {
         done
 }
 
-function restartZookeeper {
+restartZookeeper() {
 	echo "Restarting zookeeper"
 	for masterId in `seq 1 ${numberOfMasters}`;
     do
@@ -88,7 +102,7 @@ function restartZookeeper {
 	sleep 5
 }
 
-function configureMesosphere {
+configureMesosphere() {
 	echo "Configuring zookeeper quorum in mesos"
 	zkMesos='zk://'
 	for masterId in `seq 1 ${numberOfMasters}`;
@@ -127,7 +141,7 @@ function configureMesosphere {
     sshpass -p "root" ssh -o StrictHostKeyChecking=no root@"${hostname}" "nohup /usr/bin/chronos --hostname $hostname > foo.out 2> foo.err < /dev/null &"
 }
 
-function stopRunningContainers {
+stopRunningContainers() {
     echo "Stopping any running containers"
     for masterId in `seq 1 ${numberOfMasters}`;
         do
@@ -143,6 +157,8 @@ function stopRunningContainers {
 
 numberOfMasters=${1}
 numberOfSlaves=${2}
+buildImages
+createDockerNetwork
 stopRunningContainers
 backupHostsFile
 startMasters
