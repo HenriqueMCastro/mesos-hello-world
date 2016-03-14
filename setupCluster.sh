@@ -2,7 +2,13 @@
 
 network="172.18.0.0./16"
 
+die () {
+    echo >&2 "$@"
+    exit 1
+}
+
 buildImages() {
+    echo "Building mesos master and slave images"
     docker build -t mesos_master master
     docker build -t mesos_slave slave
 }
@@ -155,6 +161,7 @@ stopRunningContainers() {
         done
 }
 
+[ "$#" -eq 2 ] || die "2 arguments required (number of masters and number of slaves), $# provided"
 numberOfMasters=${1}
 numberOfSlaves=${2}
 buildImages
