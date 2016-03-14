@@ -16,7 +16,7 @@ docker build -t mesos_master master
 docker build -t mesos_slave slave
 ```
 
-Create the docker network (172.18.0.0/16 by default)
+And then create the docker network (172.18.0.0/16 by default)
 
 ```
 docker network create --subnet=${network} mynetwork
