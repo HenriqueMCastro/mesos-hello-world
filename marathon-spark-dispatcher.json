@@ -1,0 +1,10 @@
+{
+    "id": "spark-dispatcher",
+    "cmd": "/opt/spark/current/bin/spark-class org.apache.spark.deploy.mesos.MesosClusterDispatcher --master \"mesos://mesos-master-1\"",
+    "mem": 512,
+    "cpus": 0.5,
+    "instances": 1,
+    "disk": 0.0,
+    "ports": [0]
+}
+

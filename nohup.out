@@ -1,0 +1,35 @@
+Java HotSpot(TM) 64-Bit Server VM warning: ignoring option MaxPermSize=350m; support was removed in 8.0
+log4j:WARN No appenders could be found for logger (io.netty.util.internal.logging.InternalLoggerFactory).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+[  63561]   WARN - pl.local.NativeFileWatcherImpl - Watcher terminated with exit code 0 
+[  63632]  ERROR - j.openapi.util.ShutDownTracker - Task java.util.concurrent.FutureTask@59f4c418 rejected from java.util.concurrent.ThreadPoolExecutor@5dcb4bfe[Shutting down, pool size = 4, active threads = 4, queued tasks = 0, completed tasks = 133] 
+java.util.concurrent.RejectedExecutionException: Task java.util.concurrent.FutureTask@59f4c418 rejected from java.util.concurrent.ThreadPoolExecutor@5dcb4bfe[Shutting down, pool size = 4, active threads = 4, queued tasks = 0, completed tasks = 133]
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2047)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:823)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1369)
+	at java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:112)
+	at com.intellij.openapi.application.impl.ApplicationImpl.executeOnPooledThread(ApplicationImpl.java:360)
+	at com.intellij.execution.rmi.RemoteProcessSupport.stopAll(RemoteProcessSupport.java:92)
+	at org.jetbrains.idea.maven.server.MavenServerManager.shutdown(MavenServerManager.java:181)
+	at org.jetbrains.idea.maven.server.MavenServerManager$2.run(MavenServerManager.java:152)
+	at com.intellij.openapi.util.ShutDownTracker.run(ShutDownTracker.java:60)
+	at java.lang.Thread.run(Thread.java:745)
+[  63638]  ERROR - j.openapi.util.ShutDownTracker - IntelliJ IDEA 15.0.1  Build #IU-143.382.35 
+[  63638]  ERROR - j.openapi.util.ShutDownTracker - JDK: 1.8.0_66 
+[  63638]  ERROR - j.openapi.util.ShutDownTracker - VM: Java HotSpot(TM) 64-Bit Server VM 
+[  63638]  ERROR - j.openapi.util.ShutDownTracker - Vendor: Oracle Corporation 
+[  63638]  ERROR - j.openapi.util.ShutDownTracker - OS: Linux 
+QXcbWindow: Unhandled client message: "_GTK_LOAD_ICONTHEMES"
+QXcbWindow: Unhandled client message: "_GTK_LOAD_ICONTHEMES"
+QXcbWindow: Unhandled client message: "_GTK_LOAD_ICONTHEMES"
+QXcbWindow: Unhandled client message: "_GTK_LOAD_ICONTHEMES"
+QXcbWindow: Unhandled client message: "_GTK_LOAD_ICONTHEMES"
+QXcbWindow: Unhandled client message: "_GTK_LOAD_ICONTHEMES"
+QXcbWindow: Unhandled client message: "_GTK_LOAD_ICONTHEMES"
+QXcbWindow: Unhandled client message: "_GTK_LOAD_ICONTHEMES"
+QXcbWindow: Unhandled client message: "_GTK_LOAD_ICONTHEMES"
+QXcbWindow: Unhandled client message: "_GTK_LOAD_ICONTHEMES"
+codecForName: ucnv_open failed ISO-8859-16 U_FILE_ACCESS_ERROR
+KSambaShare: Could not find smb.conf!
+couldn't lock local file

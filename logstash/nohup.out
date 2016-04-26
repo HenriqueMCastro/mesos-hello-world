@@ -1,0 +1,46 @@
+OpenJDK 64-Bit Server VM warning: ignoring option MaxPermSize=350m; support was removed in 8.0
+[1481345]  ERROR - plication.impl.ApplicationImpl - java.io.IOException: writePrevChunkAddress:3885632,3885633,/home/hcastro/.PyCharm2016.1/system/index/idindex/IdIndex.storage.values 
+java.lang.RuntimeException: java.io.IOException: writePrevChunkAddress:3885632,3885633,/home/hcastro/.PyCharm2016.1/system/index/idindex/IdIndex.storage.values
+	at com.intellij.util.io.PersistentHashMap$5.onDropFromCache(PersistentHashMap.java:251)
+	at com.intellij.util.io.PersistentHashMap$5.onDropFromCache(PersistentHashMap.java:215)
+	at com.intellij.util.containers.SLRUMap.clear(SLRUMap.java:153)
+	at com.intellij.util.io.PersistentHashMap.doClose(PersistentHashMap.java:642)
+	at com.intellij.util.io.PersistentHashMap.close(PersistentHashMap.java:633)
+	at com.intellij.util.indexing.MapIndexStorage.clear(MapIndexStorage.java:199)
+	at com.intellij.util.indexing.MemoryIndexStorage.clear(MemoryIndexStorage.java:96)
+	at com.intellij.util.indexing.MapReduceIndex.clear(MapReduceIndex.java:128)
+	at com.intellij.util.indexing.FileBasedIndexImpl.doClearIndex(FileBasedIndexImpl.java:1331)
+	at com.intellij.util.indexing.FileBasedIndexImpl.access$3400(FileBasedIndexImpl.java:100)
+	at com.intellij.util.indexing.FileBasedIndexImpl$21$1.run(FileBasedIndexImpl.java:1605)
+	at com.intellij.openapi.progress.impl.CoreProgressManager$TaskRunnable.run(CoreProgressManager.java:563)
+	at com.intellij.openapi.progress.impl.CoreProgressManager$8.run(CoreProgressManager.java:357)
+	at com.intellij.openapi.progress.impl.CoreProgressManager$2.run(CoreProgressManager.java:142)
+	at com.intellij.openapi.progress.impl.CoreProgressManager.registerIndicatorAndRun(CoreProgressManager.java:446)
+	at com.intellij.openapi.progress.impl.CoreProgressManager.executeProcessUnderProgress(CoreProgressManager.java:392)
+	at com.intellij.openapi.progress.impl.ProgressManagerImpl.executeProcessUnderProgress(ProgressManagerImpl.java:54)
+	at com.intellij.openapi.progress.impl.CoreProgressManager.runProcess(CoreProgressManager.java:127)
+	at com.intellij.openapi.application.impl.ApplicationImpl$13$1.run(ApplicationImpl.java:633)
+	at com.intellij.openapi.application.impl.ApplicationImpl$8.run(ApplicationImpl.java:369)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.io.IOException: writePrevChunkAddress:3885632,3885633,/home/hcastro/.PyCharm2016.1/system/index/idindex/IdIndex.storage.values
+	at com.intellij.util.io.PersistentHashMapValueStorage.writePrevChunkAddress(PersistentHashMapValueStorage.java:462)
+	at com.intellij.util.io.PersistentHashMapValueStorage.saveData(PersistentHashMapValueStorage.java:176)
+	at com.intellij.util.io.PersistentHashMapValueStorage.appendBytes(PersistentHashMapValueStorage.java:151)
+	at com.intellij.util.io.PersistentHashMap$5.onDropFromCache(PersistentHashMap.java:236)
+	... 24 more
+[1481348]  ERROR - plication.impl.ApplicationImpl - PyCharm Community Edition 2016.1.2  Build #PC-145.844.6 
+[1481348]  ERROR - plication.impl.ApplicationImpl - JDK: 1.8.0_76-release 
+[1481348]  ERROR - plication.impl.ApplicationImpl - VM: OpenJDK 64-Bit Server VM 
+[1481349]  ERROR - plication.impl.ApplicationImpl - Vendor: JetBrains s.r.o 
+[1481349]  ERROR - plication.impl.ApplicationImpl - OS: Linux 
+[1481349]  ERROR - plication.impl.ApplicationImpl - Last Action: EditorDeleteLine 
+Apr 25, 2016 7:05:23 PM java.util.prefs.FileSystemPreferences syncWorld
+WARNING: Couldn't flush user prefs: java.util.prefs.BackingStoreException: Couldn't get file lock.
+[63460088]  ERROR - j.util.io.ResizeableMappedFile - No space left on device 
+java.io.IOException: No space left on device
+	at java.io.FileOutputStream.writeBytes(Native Method)
+	at java.io.FileOutputStream.write(FileOutputStream.java:326)
